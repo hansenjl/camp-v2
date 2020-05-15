@@ -134,13 +134,9 @@ class Camper
               c.assign_to_group(g2)
             end
             #BOTH have groups
-          elsif !!self.group_id2 && self.group_id2 != ""
-
-
-            g = Group.find_by_letter(self.group_id2)
+          elsif !!self.group_id2 && g = Group.find_by_letter(self.group_id2)
             person.assign_to_group(g)
-          elsif !!person.group_id2 && person.group_id2 != ""
-            g = Group.find_by_letter(person.group_id2)
+          elsif !!person.group_id2 && g = Group.find_by_letter(person.group_id2)
             self.assign_to_group(g)
           else
             #create a new group
@@ -155,7 +151,6 @@ class Camper
     end
 
     def assign_to_group(group)
-
       self.group_id = group.age
       self.group_id2 = group.letter
       #group.campers << self
