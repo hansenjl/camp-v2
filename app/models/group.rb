@@ -1,6 +1,6 @@
 class Group
     attr_accessor :age, :letter, :code
-    attr_reader :campers
+
     @@counter = 0
     @@all = []
     def initialize(age)
@@ -42,9 +42,13 @@ class Group
     #turn this into a generator later
 
     def code=(code)
+      age = self.campers.map(&:age).max
+
       self.campers.each do |c|
+        c.group_id = age
         c.group_id2 = code
       end
+
       @code = code
     end
 
