@@ -16,7 +16,6 @@ class ApplicationController < Sinatra::Base
         p = Parser.new(path: filename, data: csv_data)
         p.import
         Camper.assign
-        p.create
         content_type 'application/csv'
         attachment "#{p.path}"
         csv_string = p.create
