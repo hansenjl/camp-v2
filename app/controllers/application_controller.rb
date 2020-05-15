@@ -21,6 +21,4 @@ class ApplicationController < Sinatra::Base
         csv_string = p.create
     end
 
-
-
   end
