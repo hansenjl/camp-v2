@@ -62,12 +62,7 @@ class Parser
           csv << [c.session, c.name_used, "", c.age, c.grade, c.prev_grade, c.first, c.last, c.city.name, c.school, c.birthdate, c.tribe, c.sibling_tribe, c.tenure, c.group_id_1, group2, c.rid, c.prev_cab, c.past_camper_rating, c.balance, c.discount, c.campmom_med_discount, c.parent_notes, c.admin_notes, "", "", "#{c.req1} (#{c.req1_city})", "", "", "#{c.req2} (#{c.req2_city})", "", "", c.ofa_group]
         end
       end
-      File.write("app/views/csv/#{@path}.erb", new_data)
+
       new_data
     end
-
   end
-
-
-
-  #  Cabin_Requests_1.csv
