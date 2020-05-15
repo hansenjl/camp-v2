@@ -1,11 +1,16 @@
 class Parser
     attr_reader :data, :path
     @@codes = %w[A B C D E F G H I J K L M N O P Q R S T U V W Y Z AA BB CC DD EE FF GG HH II JJ KK LL MM NN OO PP QQ RR SS TT UU VV WW YY ZZ AAA BBB CCC DDD EEE FFF GGG HHH III JJJ KKK LLL MMM NNN OOO PPP QQQ RRR SSS TTT UUU VVV WWW YYY ZZZ AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII JJJJ KKKK LLLL MMMM NNNN OOOO PPPP QQQQ RRRR SSSS TTTT UUUU VVVV WWWW YYYY ZZZZ AAAAA BBBBB CCCCC DDDDD EEEEE FFFFF GGGGG HHHHH IIIII JJJJJ KKKKK LLLLL MMMMM NNNNN OOOOO PPPPP QQQQQ RRRRR SSSSS TTTTT UUUUU VVVVV WWWWW YYYYY ZZZZZ AAAAAA BBBBBB CCCCCC DDDDDD EEEEEE FFFFFF GGGGGG HHHHHH IIIIII JJJJJJ KKKKKK LLLLLL MMMMMM NNNNNN OOOOOO PPPPPP]
-
+    @@all = []
 
     def initialize(data:, path:)
         @data = data
         @path = path
+        @@all << self
+    end
+
+    def self.last
+        @@all[-1]
     end
 
     # @data.headers gives all headers
@@ -50,14 +55,15 @@ class Parser
     end
 
     def create
-      data = CSV.generate do |csv|
+      new_data = CSV.generate do |csv|
         csv << @data.headers
         Camper.sorted.each do |c|
           group2 = c.group_id_2 ? @@codes[c.group_id_2] : "X"
           csv << [c.session, c.name_used, "", c.age, c.grade, c.prev_grade, c.first, c.last, c.city.name, c.school, c.birthdate, c.tribe, c.sibling_tribe, c.tenure, c.group_id_1, group2, c.rid, c.prev_cab, c.past_camper_rating, c.balance, c.discount, c.campmom_med_discount, c.parent_notes, c.admin_notes, "", "", "#{c.req1} (#{c.req1_city})", "", "", "#{c.req2} (#{c.req2_city})", "", "", c.ofa_group]
         end
       end
-      File.write(@path, data)
+      File.write("app/views/csv/#{@path}.erb", new_data)
+      new_data
     end
 
   end
