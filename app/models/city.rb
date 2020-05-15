@@ -9,6 +9,10 @@ class City
       self
     end
 
+    def self.clear
+      @@all = []
+    end
+
     def self.all
       @@all
     end

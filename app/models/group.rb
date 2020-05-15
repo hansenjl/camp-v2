@@ -11,6 +11,11 @@ class Group
       @@all << self
     end
 
+    def self.clear
+      @@all = []
+      @@counter = 0
+    end
+
     def campers
       Camper.all.select{|c|c.group_id2 == self.letter }
     end

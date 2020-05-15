@@ -6,6 +6,13 @@ class Parser
     def initialize(data:, path:)
         @data = data
         @path = path
+        clear_all
+    end
+
+    def clear_all
+        Camper.clear
+        Group.clear
+        City.clear
     end
 
     def import

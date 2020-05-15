@@ -9,6 +9,10 @@ class Camper
     end
   end
 
+  def self.clear
+    @@all = []
+  end
+
     @@all = []
 
 
