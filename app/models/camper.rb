@@ -127,17 +127,19 @@ class Camper
           ##both peeps have groups
           #1 has a group vice versa
           #none have groups
-          if !!person.group_id2  && !!self.group_id2 && self.group_id2 != person.group_id2
+          if !!person.group_id2  && !!self.group_id2 && self.group_id2 != person.group_id2 && self.group_id2 != "" && person.group_id2 != ""
             g1 = Group.find_by_letter(self.group_id2)
             g2 = Group.find_by_letter(person.group_id2)
             g1.campers.each do |c|
               c.assign_to_group(g2)
             end
             #BOTH have groups
-          elsif !!self.group_id2
+          elsif !!self.group_id2 && self.group_id2 != ""
+
+
             g = Group.find_by_letter(self.group_id2)
             person.assign_to_group(g)
-          elsif !!person.group_id2
+          elsif !!person.group_id2 && person.group_id2 != ""
             g = Group.find_by_letter(person.group_id2)
             self.assign_to_group(g)
           else
