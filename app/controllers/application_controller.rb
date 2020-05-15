@@ -11,6 +11,9 @@ class ApplicationController < Sinatra::Base
     end
 
     post '/upload' do
+      if params.empty?
+        redirect '/'
+      end
         csv_data = CSV.read(params[:camp][:upload][:tempfile], headers:true, encoding:'iso-8859-1:utf-8')
         filename = params[:camp][:upload][:filename]
         p = Parser.new(path: filename, data: csv_data)
