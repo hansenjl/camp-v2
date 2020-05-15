@@ -20,7 +20,9 @@ class Group
     end
 
     def size
-      campers.try(:length)
+      if campers
+        campers.length
+      end
     end
 
     def self.find_by_letter(let)
