@@ -35,7 +35,7 @@ class Parser
       new_data = CSV.generate do |csv|
         csv << @data.headers
         sorted.each do |c|
-          group2 = c.group_id2 ? c.group_id2 : "X"
+          group2 = c.group_id2.blank? ? "X" : c.group_id2
           c.group_id = c.age if c.group_id == nil
         ### make the line below more dynamic and/or move the array part to the Camper class
           csv << [c.session, c.name_used, "", c.age, c.grade, c.prev_grade, c.first, c.last, c.city.name, c.school, c.birthdate, c.tribe, c.sibling_tribe, c.years_at_ozark, c.group_id, group2, c.rid2, c.prev_cab, c.past_camper_rating, c.balance, c.discount, c.campmom_med_discount, c.parent_notes, c.admin_notes, "", "", c.request_1, "", "", c.request_2, "", "", c.ofa_group, c.sibs]
