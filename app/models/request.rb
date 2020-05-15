@@ -5,7 +5,7 @@ class Request
       @met = false
       if req && req != " " && req != ""
         @first = req.split[0].strip
-        @last = req.split[1]
+        @last = req.split[1] || ""
       end
       @city = city
       @value = value
