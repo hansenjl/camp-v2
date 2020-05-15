@@ -74,8 +74,8 @@ class Camper
     end
 
     def self.sorted
-
-      @@all.sort_by { |camper|  [-camper.group_id.to_i, camper.group_id2 || 200, camper.birthdate] }
+      birth_sorted = @@all.sort_by{|c| c.birthdate}
+      birth_sorted.sort_by { |camper|  [-camper.group_id.to_i, camper.group_id2 || 200] }
     end
 
     def self.make_from_row(line, headers)
