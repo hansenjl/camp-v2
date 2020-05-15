@@ -30,8 +30,9 @@ class Parser
     end
 
     def create
-      sorted = Camper.sorted
+
       Group.assign_codes
+      sorted = Camper.sorted
       new_data = CSV.generate do |csv|
         csv << @data.headers
         sorted.each do |c|
