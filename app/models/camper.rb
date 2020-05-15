@@ -1,24 +1,67 @@
+require_relative './parser'
 class Camper
-    attr_accessor :name_used, :first, :last, :age, :grade, :cabin, :prev_grade, :session, :city, :school, :birthdate, :tribe, :sibling_tribe, :tenure, :group_id_1, :group_id_2, :rid, :prev_cab, :past_camper_rating, :balance, :parent_notes, :admin_notes, :req1, :req2, :met1, :met2, :req1_city, :req2_city, :matched, :requests, :discount, :campmom_med_discount, :ofa_group
+  attr_accessor :matched, :requests#, :name_used, :first, :last, :age, :grade, :cabin, :prev_grade, :session, :city, :school, :birthdate, :tribe, :sibling_tribe, :years_at_ozark, :group_id, :group_id2, :rid2, :prev_cab, :past_camper_rating, :balance, :parent_notes, :admin_notes, :request_1, :request_2, :met1, :met2,  :discount, :campmom_med_discount, :ofa_group, :sibs, :if_no_why1, :if_no_why2, :if_no_why3, :met3
+
+
+  def self.make_attribute_readers_and_writers(headers)
+    headers.each do |h|
+      attr_accessor(h)
+    end
+  end
 
     @@all = []
-    @@assigned = []
-    @@unassigned = []
+
+
+#      ["session",
+#  "name used",
+#  "CABIN",
+#  "age",
+#  "grade",
+#  "prev_grade",
+#  "first",
+#  "last",
+#  "city",
+#  "school",
+#  "birthdate",
+#  "tribe",
+#  "sibling_tribe",
+#  "years at ozark",
+#  "group id",
+#  "group id2",
+#  "rid2",
+#  "prev_cab",
+#  "past_camper_rating",
+#  "balance",
+#  "discount",
+#  "campmom_med_discount",
+#  "parent_notes",
+#  "admin_notes",
+#  "met#1",
+#  "if no, why#1",
+#  "Request 1",
+#  "met#2",
+#  "if no, why#2",
+#  "Request 2",
+#  "met#3",
+#  "if no, why#3",
+#  "ofa_group",
+#  "sibs"]
 
     def initialize(camper_hash)
       camper_hash.each do |key, value|
         self.send(("#{key}="), value)
       end
       self.matched = false
-      c = City.find_or_create_by_name(@city)
-      c.campers << self
-      @city = c
-      if @req1 && @req1 != ""  && @req1 != " "
-        r1 = Request.new(@req1, City.find_or_create_by_name(@req1_city), self, 1)
+      self.city= City.find_or_create_by_name(@city)
+      self.city.campers << self
+      if @request_1 && @request_1 != ""  && @request_1 != " "
+        r1 = Request.new_from_string(@request_1, self, 1)
+        #r1 = Request.new(@req1, City.find_or_create_by_name(@req1_city), self, 1)
         self.requests = [r1] if r1
         #only look at req 2 if req1 exists
-        if @req2 && @req2 != ""  && @req2 != " "
-          r2 = Request.new(@req2, City.find_or_create_by_name(@req2_city), self, 2)
+        if @request_2 && @request_2 != ""  && @request_2 != " "
+          r2 = Request.new_from_string(@request_2, self, 2)
+          #r2 = Request.new(@req2, City.find_or_create_by_name(@req2_city), self, 2)
           self.requests << r2  if r2
         end
       end
@@ -32,34 +75,34 @@ class Camper
 
     def self.sorted
 
-      @@all.sort_by { |camper|  [-camper.group_id_1.to_i, camper.group_id_2 || 200, camper.birthdate] }
+      @@all.sort_by { |camper|  [-camper.group_id.to_i, camper.group_id2 || 200, camper.birthdate] }
     end
 
-    # def self.assigned
-    #   @@assigned
-    # end
+    def self.make_from_row(line, headers)
+      attr_hash = {}
+      headers.each_with_index do |h, i|
+        attr_hash[h] = line[i]
+      end
+      self.new(attr_hash)
+    end
 
-    # def self.unassigned
-    #   @@unassigned
-    # end
 
     #assign group ids for all campers
     def self.assign
       #start with first camper
-      #@@unassigned = self.all  #the @@unassigned are all campers without a groupid
       ## will loop through all but all won't be removed
-      #until @@unassigned.length == @@assigned.length
+
       @@all.each_with_index do |camper,i|
         if camper.requests
-          camper.assign(camper.requests)
-        elsif camper.group_id_2 == nil
-          camper.group_id_1 = camper.age
+          camper.assign
+        elsif camper.group_id2 == nil
+          camper.group_id = camper.age
           #this person made no requests and hasn't been requested by anyone else yet
         end
       end
     end
 
-    def assign(req)
+    def assign
       @requests.each do |req|
         #look for camper in his city group
         matches = req.city.campers.select{|c|c.last == req.last.upcase}
@@ -84,18 +127,18 @@ class Camper
           ##both peeps have groups
           #1 has a group vice versa
           #none have groups
-          if !!person.group_id_2  && !!self.group_id_2 && self.group_id_2 != person.group_id_2
-            g1 = Group.find_by_letter(self.group_id_2)
-            g2 = Group.find_by_letter(person.group_id_2)
+          if !!person.group_id2  && !!self.group_id2 && self.group_id2 != person.group_id2
+            g1 = Group.find_by_letter(self.group_id2)
+            g2 = Group.find_by_letter(person.group_id2)
             g1.campers.each do |c|
               c.assign_to_group(g2)
             end
             #BOTH have groups
-          elsif !!self.group_id_2
-            g = Group.find_by_letter(self.group_id_2)
+          elsif !!self.group_id2
+            g = Group.find_by_letter(self.group_id2)
             person.assign_to_group(g)
-          elsif !!person.group_id_2
-            g = Group.find_by_letter(person.group_id_2)
+          elsif !!person.group_id2
+            g = Group.find_by_letter(person.group_id2)
             self.assign_to_group(g)
           else
             #create a new group
@@ -103,16 +146,17 @@ class Camper
             person.assign_to_group(g)
             self.assign_to_group(g)
           end
-        else
-          self.group_id_1 = self.age
+        # else
+        #   self.group_id = self.age
         end
       end
     end
 
     def assign_to_group(group)
-      self.group_id_1 = group.age
-      self.group_id_2 = group.letter
-      group.campers << self
+
+      self.group_id = group.age
+      self.group_id2 = group.letter
+      #group.campers << self
     end
 
 
