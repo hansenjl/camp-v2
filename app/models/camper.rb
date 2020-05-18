@@ -79,11 +79,27 @@ class Camper
 
     def self.sorted
       @@all.each do |c|
-        c.group_id = c.age if c.group_id == "" || c.group_id == nil
-        c.group_id2 = "X" if c.group_id2 == "" || c.group_id2 == nil
+        c.group_id = c.age if (c.group_id == "" || c.group_id == nil)
+        c.group_id2 = "X" if (c.group_id2 == "" || c.group_id2 == nil)
       end
-      birth_sorted = @@all.sort_by{|c| c.birthdate}
-      birth_sorted.sort_by { |camper|  [-camper.group_id.to_i, camper.group_id2 || 200] }
+
+      # birth_sorted = @@all.sort_by{|c| c.birthdate}
+      # birth_sorted.sort_by { |camper|  [-camper.group_id.to_i, camper.group_id2 || 200] }
+      @@all.sort do |a,b|
+        c = b.group_id.to_i <=> a.group_id.to_i
+        if c == 0
+          c = a.group_id2 <=> b.group_id2
+          if c == 0
+            begin
+              c = Date.strptime(a.birthdate,'%m/%d/%Y') <=> Date.strptime(b.birthdate,'%m/%d/%Y')
+            rescue
+              c = a.group_id2 <=> b.group_id2
+            end
+         end
+         c
+        end
+        c
+      end
     end
 
     def self.make_from_row(line, headers)
