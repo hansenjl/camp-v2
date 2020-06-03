@@ -36,8 +36,10 @@ class Group
 
     def self.new_code(code)
       #"A" = 65 "Z" = 90
-      if code[-1].ord < 90
+      if code[-1].ord < 90 && code[-1].ord != 87
         new_code = code.split("").map{|c| (c.ord + 1).chr}.join
+      elsif code[-1].ord == 87
+          new_code = code.split("").map{|c| (c.ord + 2).chr}.join
       else
         new_length = code.length + 1
         new_code = "A" * new_length
