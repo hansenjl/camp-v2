@@ -15,7 +15,8 @@ class Request
     def self.new_from_string(string, camper, value)
       if !string.nil? && !string.strip.empty?
         request1 =  string.split("(")
-        req1_city = request1[-1].chomp(")") if request1[-1] != nil
+        request1 = request1.reject(&:empty?) if request1.length > 2
+        req1_city = request1[-1].gsub(")", "") if request1[-1] != nil
         city_obj = City.find_or_create_by_name(req1_city.downcase) if req1_city
         if request1.length < 3
           req1 = request1[0].strip.upcase
