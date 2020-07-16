@@ -20,7 +20,7 @@ class Request
         if request1.length < 3
           req1 = request1[0].strip.upcase
         else
-          r = request1[1].split(")")
+          r = request1[1].split(")") || ""
           req1 = request1[0].strip.upcase + " " + r[-1].strip.upcase
         end
       else
